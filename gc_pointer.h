@@ -108,7 +108,15 @@ Pointer<T,size>::Pointer(T *t){
 
     // TODO: Implement Pointer constructor
     // Lab: Smart Pointer Project Lab
-
+    addr = t;
+    arraySize = size;
+    if(arraySize > 0)
+        isArray = true;
+    else
+        isArray = false;
+    
+    if(t)
+        refContainer.push_back(PtrDetails<T>(t,arraySize));
 }
 // Copy constructor.
 template< class T, int size>
@@ -116,7 +124,15 @@ Pointer<T,size>::Pointer(const Pointer &ob){
 
     // TODO: Implement Pointer constructor
     // Lab: Smart Pointer Project Lab
-
+    typename std::list<PtrDetails<T> >::iterator p;
+    p = findPtrInfo(ob.addr);
+    p->refcount++;
+    addr = ob.addr;
+    arraySize = ob.arraySize;
+    if(arraySize > 0)
+        isArray = true;
+    else
+        isArray = false;
 }
 
 // Destructor for Pointer.
@@ -125,6 +141,12 @@ Pointer<T, size>::~Pointer(){
     
     // TODO: Implement Pointer destructor
     // Lab: New and Delete Project Lab
+    typename std::list<PtrDetails<T> >::iterator p;
+    p = findPtrInfo(addr);
+    if(p->refcount)
+    p->refcount--;
+
+    collect();
 }
 
 // Collect garbage. Returns true if at least
@@ -152,7 +174,7 @@ Pointer<T, size> &Pointer<T, size>::operator=(Pointer &rv){
 
     // TODO: Implement operator==
     // LAB: Smart Pointer Project Lab
-
+ 
 }
 
 // A utility function that displays refContainer.
